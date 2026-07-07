@@ -1,0 +1,23 @@
+# Klipper config and install scripts. The config/ files are tracked; runtime
+# state and local litter are not.
+
+__pycache__/
+*.pyc
+.venv/
+
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Klipper runtime state, host-generated
+variables.cfg
+printer-*.cfg
+
+# Local screenshots, some show a hostname and a LAN IP
+/images/
+
+*.zip
+*.gcode
+
+!config/*.cfg
