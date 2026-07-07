@@ -62,7 +62,9 @@ These are the official EBB42 **Gen2** silkscreen pins. The older EBB42 layout is
 | RGB | PB14 | RGB |
 | Accelerometer | CS PB1 / SCLK PB10 / MOSI PB11 / MISO PB2 | onboard |
 
-The extruder is the BIQU Nebula on the EBB motor header. The runout switch, macro button, cutter hall, and RGB are all Nebula harness lines; the accelerometer is the EBB42's onboard LIS2DW over software SPI.
+The extruder is the BIQU Nebula on the EBB motor header. The runout switch, macro button, cutter hall, and RGB are all Nebula harness lines; the accelerometer is the EBB42's onboard LIS2DW over software SPI (the X-axis input-shaping chip, `accel_chip_x`).
+
+The Y-axis accelerometer is a separate BTT S2DW V1.0: a self-contained USB module with its own RP2040 and an internal LIS2DW12. It mounts on the bed and connects to the host over USB-C. Nothing wires to the Octopus or EBB42 for it. Klipper uses it as `accel_chip_y` while the EBB42 onboard accelerometer stays `accel_chip_x`, so both axes calibrate without moving a sensor between passes.
 
 ## CAN topology
 

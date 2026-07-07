@@ -28,13 +28,14 @@ The configs in `config/` are configuration for [Klipper](https://github.com/Klip
 
 ## Vendor hardware documents (`docs/hardware/`)
 
-The files under `docs/hardware/` are the hardware vendors' own published materials (schematics, pinout diagrams, manuals, sample configs), copied unmodified from their public repositories. They are included so a builder can wire and flash the boards without hunting down four separate repos. They are **not** covered by this repository's GPL-3.0 license; each stays under its original terms:
+The files under `docs/hardware/` are the hardware vendors' own published materials (schematics, pinout diagrams, manuals, sample configs), copied unmodified from their public repositories. They are included so a builder can wire and flash the boards without hunting down five separate repos. They are **not** covered by this repository's GPL-3.0 license; each stays under its original terms:
 
 | Product | Vendor | Source | Terms |
 |---|---|---|---|
 | EBB42 CAN V1.0 / Gen2 toolhead board | BIGTREETECH | https://github.com/bigtreetech/EBB | No license file in the source repo; copyright remains with BIGTREETECH |
 | Eddy / Eddy Duo probe | BIGTREETECH | https://github.com/bigtreetech/Eddy | No license file in the source repo; copyright remains with BIGTREETECH |
 | Octopus V1.0 mainboard | BIGTREETECH | BIGTREETECH's published Octopus V1.0 repository (github.com/bigtreetech) | No license file in the source repo; copyright remains with BIGTREETECH |
+| S2DW V1.0 accelerometer | BIGTREETECH | https://github.com/bigtreetech/LIS2DW | No license file in the source repo; copyright remains with BIGTREETECH |
 | Nebula smart extruder | BIQU | https://github.com/bigtreetech/Nebula (wiki: https://bttwiki.com/Nebula.html) | CC BY-NC-ND 4.0, copyright (c) 2025 BIQU |
 
 Note on the Nebula material: CC BY-NC-ND 4.0 permits redistribution with attribution but forbids modification and commercial use. The Nebula documents here are verbatim copies, attributed above.

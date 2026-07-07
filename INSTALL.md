@@ -8,7 +8,7 @@ Read section 6 (safety gates) before you power the assembled machine. The bed ru
 
 - A working Klipper host: Raspberry Pi, Jetson, or any Linux SBC already running Klipper + Moonraker with a frontend (Mainsail or Fluidd). The install script expects the standard layout: `~/klipper` (the Klipper source tree) and `~/printer_data/config` (your config directory).
 - `git` on the host.
-- The hardware from the README: BTT Octopus V1.0 (STM32F446ZET6), BTT EBB42 Gen2 (STM32G0B1), BTT EBB USB adapter (U2C) as the host CAN bridge, BTT Eddy Duo (RP2040), BIQU Nebula extruder, a CH340/CH341 USB-RS485 dongle, and the Creality CFS.
+- The hardware from the README: BTT Octopus V1.0 (STM32F446ZET6), BTT EBB42 Gen2 (STM32G0B1), BTT EBB USB adapter (U2C) as the host CAN bridge, BTT Eddy Duo (RP2040), a BTT S2DW V1.0 USB accelerometer (RP2040, for Y-axis input shaping), BIQU Nebula extruder, a CH340/CH341 USB-RS485 dongle, and the Creality CFS.
 - This repo cloned onto the host:
 
 ```sh
@@ -33,6 +33,7 @@ make
 | Octopus V1.0 | STM32F446 | 32KiB bootloader, 12MHz crystal, USB (PA11/PA12) | USB (main MCU) |
 | EBB42 Gen2 | STM32G0B1 | 8KiB bootloader, 8MHz crystal, USB first, then rebuild for CAN | Katapult + Klipper over USB, then CAN |
 | Eddy Duo | RP2040 | USBSERIAL, flash chip GENERIC_03H with CLKDIV 4 | USB first, then optionally CAN |
+| BTT S2DW | RP2040 | USBSERIAL | USB only (self-contained accelerometer) |
 
 ### Octopus V1.0
 
@@ -50,6 +51,10 @@ The EBB42 gets flashed twice: once over USB for bring-up, then switched to CAN f
 ### Eddy Duo
 
 Select RP2040, USBSERIAL, and flash chip GENERIC_03H with CLKDIV 4. Hold BOOTSEL while plugging in USB so the board mounts as mass storage, then copy `out/klipper.uf2` onto it. The shipped `config/eddy.cfg` runs the probe over USB, which is the confirmed path; you can move it onto the CAN bus later by reflashing for CAN and swapping the `serial:` line for `canbus_uuid:` in `eddy.cfg`.
+
+### BTT S2DW (Y-axis accelerometer)
+
+Select RP2040 and USBSERIAL. Hold BOOTSEL while plugging in over USB, then copy `out/klipper.uf2` onto the mass-storage volume. The S2DW is a self-contained USB accelerometer, its own RP2040 plus an internal LIS2DW12, so nothing wires to the Octopus. Mount it on the bed, run its USB cable to the host, and note its `/dev/serial/by-id/` path (`usb-Klipper_rp2040_btt_acc...`) for section 4. It is only needed for Y-axis input shaping.
 
 ## 2. Run the installer
 
@@ -156,7 +161,7 @@ The shipped PID values are placeholders for a different heater sample; run both.
 
 X is straightforward: the EBB42's onboard LIS2DW12 is already configured as the resonance accelerometer, so run `SHAPER_CALIBRATE AXIS=X`.
 
-Y needs a workaround. The stock Hi had a bed-mounted accelerometer on the leveling MCU, and that MCU is gone in this build. Temporarily mount the toolhead accelerometer (or the whole EBB42 if that is easier for your wiring) on the bed, run `SHAPER_CALIBRATE AXIS=Y`, then put it back. After shaper calibration, revisit `max_accel` in `printer.cfg`: the shipped 12000 is the stock Hi value and the new toolhead mass will want a different number.
+Y uses the bed-mounted BTT S2DW (`[lis2dw bed]`, configured as `accel_chip_y`). Mount the module on the bed, plug it into the host over USB, and run `SHAPER_CALIBRATE AXIS=Y`. Before trusting the result, run `TEST_RESONANCES AXIS=Y` and confirm the `axes_map` (shipped `-y, x, -z`) matches the module's mounted orientation. After shaper calibration, revisit `max_accel` in `printer.cfg`: the shipped 12000 is the stock Hi value and the new toolhead mass will want a different number.
 
 ### 5.6 Cutter
 

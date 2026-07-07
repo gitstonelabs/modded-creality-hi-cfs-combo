@@ -21,6 +21,7 @@ Read these before you print anything.
 | BTT EBB42 Gen2 (STM32G0B1) | Toolhead board | Over CAN; hotend, fans, runout, cutter hall, RGB, accelerometer |
 | BTT EBB USB adapter | USB-to-CAN bridge | Host end of the CAN bus; one of the two 120R terminators |
 | BTT Eddy Duo (RP2040) | Z probe | Inductive coil; Z homing, bed mesh, temp compensation |
+| BTT S2DW V1.0 (RP2040) | Y-axis accelerometer | Self-contained USB module (LIS2DW12); mounts on the bed, `accel_chip_y` for input shaping |
 | BIQU Nebula | Extruder | On the EBB42 motor port; has its own macro button |
 | 4x TMC2209 | Stepper drivers | X, Y, Z1, Z2 (the stock FOC servos are gone) |
 | CH340/CH341 USB-RS485 adapter | CFS link | A+/B-/GND to the CFS 6-pin; CFS +24V comes from the printer PSU, never the dongle |

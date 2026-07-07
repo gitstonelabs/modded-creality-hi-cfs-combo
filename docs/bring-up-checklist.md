@@ -34,6 +34,12 @@ Clear all three before mains power touches the bed circuit and before the CAN bu
 - [ ] Build Klipper: RP2040, USBSERIAL / GENERIC_03H, CLKDIV 4. Flash over USB and verify it enumerates.
 - [ ] The shipped `eddy.cfg` uses the USB serial path; that is the confirmed configuration. If you want the Eddy on the CAN bus instead, reflash for CAN and switch `[mcu eddy]` from `serial:` to `canbus_uuid:`.
 
+### BTT S2DW (Y-axis accelerometer, USB)
+
+- [ ] Build Klipper: RP2040, USBSERIAL. Hold BOOTSEL, plug in over USB, copy `out/klipper.uf2` onto the mass-storage volume.
+- [ ] It is self-contained (its own RP2040 + LIS2DW12); nothing wires to the Octopus. Mount the module ON THE BED and run its USB cable to the host.
+- [ ] Confirm it enumerates: `ls /dev/serial/by-id/` shows a `usb-Klipper_rp2040_btt_acc...` entry.
+
 ## 3. Fill the placeholders
 
 Every placeholder is marked in-file. After filling them, restart Klipper yourself; the installer deliberately does not.
@@ -43,6 +49,7 @@ Every placeholder is marked in-file. After filling them, restart Klipper yoursel
 - [ ] `ebb42.cfg`: `[mcu EBB] canbus_uuid` from the query above.
 - [ ] `eddy.cfg`: `[mcu eddy] serial` by-id path (or `canbus_uuid` if you moved it to CAN).
 - [ ] `cfs.cfg`: `[creality_cfs] serial_port`, the CH340 dongle's by-id path (`usb-1a86_USB_Single_Serial_...`). Find it with `ls /dev/serial/by-id/`.
+- [ ] `printer.cfg`: `[mcu btt_s2dw] serial` by-id for the S2DW accelerometer (`usb-Klipper_rp2040_btt_acc...`).
 - [ ] Sanity check: Klipper starts, all three MCUs plus the CFS connect, `CFS_STATUS` reports the box online.
 
 Two values that look like placeholders get filled by calibration, not by editing: `cut_x` is written to `variables.cfg` by `CALIBRATE_CUT_POS` (section 5), and the Eddy frequency map is written by `PROBE_EDDY_CURRENT_CALIBRATE` (section 4).
@@ -81,7 +88,7 @@ Run these in order; the comments in `eddy.cfg` carry the same sequence.
 ### Input shaper, X then Y
 
 - [ ] X: `SHAPER_CALIBRATE AXIS=X` using the EBB42's onboard LIS2DW12.
-- [ ] Y: the stock bed-mounted accelerometer is gone with the leveling MCU, so temporarily mount the toolhead accelerometer on the bed, then `SHAPER_CALIBRATE AXIS=Y`.
+- [ ] Y: `SHAPER_CALIBRATE AXIS=Y` using the bed-mounted BTT S2DW (`[lis2dw bed]`, wired as `accel_chip_y`). First confirm its orientation: run `TEST_RESONANCES AXIS=Y` and check `axes_map` (shipped `-y, x, -z`) so the module's Y follows the printer's Y.
 - [ ] Re-tune `max_accel` in `printer.cfg` afterward. The shipped 12000 is the stock Hi value and assumes the stock toolhead mass.
 
 ## 5. Cutter setup
